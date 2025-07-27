@@ -30,7 +30,9 @@ public class HelloApplication extends Application {
             new LoteriaCard("Las ciencias", "2.png", 2),
             new LoteriaCard("La Tecnología", "8.png", 8),
             new LoteriaCard("La ingeniería", "9.png", 9),
+
     }; //all the new stuff is going in past here
+    private static final LoteriaCard LOGO_CARD = new LoteriaCard();
     final Random random = new Random(); //rng helper
 
     private int cardsDrawn = 0;
@@ -42,7 +44,7 @@ public class HelloApplication extends Application {
         Label title = new Label("LOTERIA");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 24)); //I want to make the font arial, reading into docs
 
-        ImageView cardImageView = new ImageView(LOTERIA_CARDS[0].getImage());
+        ImageView cardImageView = new ImageView(LOGO_CARD.getImage());
         cardImageView.setFitWidth(250); //250 width set for card view
         cardImageView.setPreserveRatio(true); //handles for height and makes sure the card isn't going to get messed up by screwy aspect ratios
 
@@ -62,14 +64,23 @@ public class HelloApplication extends Application {
         drawCardButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                int index = random.nextInt(LOTERIA_CARDS.length); //selects random card
-                LoteriaCard card = LOTERIA_CARDS[index];
+                if (cardsDrawn < LOTERIA_CARDS.length) {
+                    ; //selects random card
+                    LoteriaCard card = LOTERIA_CARDS[random.nextInt(LOTERIA_CARDS.length)];
+                    cardImageView.setImage(card.getImage()); //gets next image, next gets card name
+                    messageLabel.setText(card.getCardName());
 
-                cardImageView.setImage(card.getImage()); //swaps the message and image per card
-                messageLabel.setText(card.getCardName());
 
-                cardsDrawn++;
-                progressBar.setProgress(cardsDrawn / (double) LOTERIA_CARDS.length); //handles the progress bar advancement
+                    cardsDrawn++;
+                    progressBar.setProgress(cardsDrawn / (double) LOTERIA_CARDS.length); //handles the progress bar advancement
+                }
+                    //logic for ending the drawing follows
+                    if (cardsDrawn >= LOTERIA_CARDS.length) {
+                        cardImageView.setImage(LOGO_CARD.getImage());
+                        messageLabel.setText("Game Over!");
+                        drawCardButton.setDisable(true);
+                        progressBar.setStyle("-fx-accent: red;");
+                    }
             }
         });
         //now it's time for the scene setup itself
@@ -83,4 +94,4 @@ public class HelloApplication extends Application {
     public static void main(String[] args) {
         launch();
     }
-}
+    }
